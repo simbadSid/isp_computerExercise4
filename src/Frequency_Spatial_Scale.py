@@ -12,7 +12,7 @@ clearall()
 import re
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.fftpack import fft2, fftshift, ifft2   
+from scipy.fftpack import fft2, fftshift, ifft2
 
 
 SHOW_TITLE = True
@@ -197,11 +197,12 @@ def questions1_6():
 
 # Question 1.6
     img_computed = ifft2(ft2d_shifted)
-    display_image(img)
+    img_computed = img_computed.astype(int)
+    display_image(img_computed)
 
 if __name__ == "__main__":
     # I moved questions 1.1-1.6 to separate function to work on the rest of questions
-    # questions1_6()
+    questions1_6()
 
     path_chess = "../resource/damierHV.pgm"
 
@@ -240,9 +241,9 @@ if __name__ == "__main__":
     spectrum_y_0 = power_spectrum_2D(ft2d_shifted, fy=0)
     display_plot(range(len(spectrum_y_0)), spectrum_y_0)
 
-    for y in range(-40, -10):
-        spectrum_y = power_spectrum_2D(ft2d_shifted, fy=-26)
-        display_plot(range(len(spectrum_y)), spectrum_y, title="fy = -" + str(y))
+    # for y in range(-40, -10):
+    #     spectrum_y = power_spectrum_2D(ft2d_shifted, fy=-26)
+    #     display_plot(range(len(spectrum_y)), spectrum_y, title="fy = -" + str(y))
 
     # fx = -24,25
     # fy = 11,12
