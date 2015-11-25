@@ -46,15 +46,11 @@ def read_pgm(filename, byteorder='>'):
                             ).reshape((int(height), int(width)))
  
 # Function used in this computer exercise to display an images                                   
-def display_image(image, greyColor=False, title="Image", vmin=0, vmax=255, extent=None):
-    if greyColor:
-        plt.imshow(image, plt.cm.gray, vmin=vmin, vmax=vmax, extent=extent)
-    else:
-        plt.imshow(image, vmin=vmin, vmax=vmax, extent=extent)
-    if SAVE_IMAGE:
-        plt.savefig('../output/' + title.replace(' ', '_') + '.png')
+def display_image(image, title="Image", vmin=0, vmax=255, extent=None):
+    plt.imshow(image, plt.cm.gray, vmin=vmin, vmax=vmax, extent=extent)
+#    if SAVE_IMAGE:
+#        plt.savefig('../output/' + title.replace(' ', '_') + '.png')
     plt.show()
-
 
 #--------------------------------------------------- 
 # Question 1.2
@@ -82,6 +78,16 @@ def solve_discret_equation_FT(ft2d, s):
 #--------------------------------------------------- 
 # Question 1.3
 #--------------------------------------------------- 
+def power_spectrum(ft2d):
+    res     = []
+    epsilon = np.finfo(float).eps
+    for x in xrange(len(ft2d)):
+        for y in xrange(len(ft2d[0])):
+            val             = ft2d[x][y]
+            magnitudeSquare = val.imag * val.imag + val.real * val.real
+            res.append(np.log(magnitudeSquare + epsilon))
+    return res
+
 def power_spectrum_2D(ft2d, fx=None, fy=None):
     epsilon = np.finfo(float).eps
     if fx != None:
@@ -127,6 +133,7 @@ def display_plot(x, y, title="Plot", xlabel="x", ylabel="y", limits=[]):
     if SAVE_IMAGE:
         plt.savefig('../output/' + title.replace(' ', '_') + '.png')
     plt.show()
+
 #--------------------------------------------------- 
 # Question 1.9 and 1.10
 #--------------------------------------------------- 
@@ -144,7 +151,7 @@ def questions1_6():
 # Question 1.1
     img = read_pgm(path_wheel)
     (width, height) = img.shape
-    display_image(img, True)
+    display_image(img)
 
 # Question 1.2
     ft2d    = fft2(img)
@@ -152,11 +159,33 @@ def questions1_6():
     freqSol = solve_discret_equation_FT(ft2d, sum)
     
 # Question 1.3
+
+# there is the first version of the answer
+    # epsilon         = np.finfo(float).eps
+    # axis            = np.array(range(0, width * height))
+    # spectrum        = power_spectrum(ft2d)
+    # display_plot(axis, spectrum,
+    #              xlabel='Fourier domain\'s index (= x + y*width)',
+    #              ylabel='log(modulus(ft(x, y))^2)',
+    #              limits=[0, width * height, min(spectrum), max(spectrum)])
+
+# here what i think is right (another version)
     spectrum_2D = power_spectrum_2D(ft2d)
     display_image(spectrum_2D, vmin=min(spectrum_2D.flatten()), vmax=max(spectrum_2D.flatten()))
 
 # Question 1.4
-    ft2d_shifted        = fftshift(ft2d)
+
+# there is the first version of the answer
+    # ft2d_shifted = fftshift(ft2d)
+    # spectrum_shifted = power_spectrum(ft2d_shifted)
+    # axis = np.array(range(- width*height / 2 + 1, width * height / 2 + 1))
+    # display_plot(axis, spectrum_shifted,
+    #              xlabel='Fourier domain\'s index (= x + y*width)',
+    #              ylabel='log(modulus(ft(x, y))^2)',
+    #              limits=[- width * height / 2, width * height / 2 + 2, min(spectrum), max(spectrum)])
+
+# here what i think is right (another version)
+    ft2d_shifted = fftshift(ft2d)
     spectrum_shifted_2D = power_spectrum_2D(ft2d_shifted)
     img_size = img.shape[0] * img.shape[1]
     display_image(spectrum_shifted_2D,
@@ -166,9 +195,9 @@ def questions1_6():
 
 
 # Question 1.6
-    img_computed = ifft2(ft2d)
+    img_computed = ifft2(ft2d_shifted)
     img_computed = img_computed.astype(int)
-    display_image(img_computed, True)
+    display_image(img_computed)
 
 if __name__ == "__main__":
     # I moved questions 1.1-1.6 to separate function to work on the rest of questions
@@ -179,7 +208,7 @@ if __name__ == "__main__":
 # Question 1.7
     img = read_pgm(path_chess)
     (width, height) = img.shape
-    display_image(img, True)
+    display_image(img)
 
 # Question 1.8
     ft2d = fft2(img)
