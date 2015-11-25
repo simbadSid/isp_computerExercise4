@@ -46,13 +46,18 @@ def read_pgm(filename, byteorder='>'):
                             ).reshape((int(height), int(width)))
  
 # Function used in this computer exercise to display an images                                   
-def display_image(image, greyColor=False, title="Image", vmin=0, vmax=255, extent=None):
+def display_image(image, greyColor=False, title="Image", vmin=0, vmax=255, extent=None, xlabel=None, ylabel=None):
     if greyColor:
         plt.imshow(image, plt.cm.gray, vmin=vmin, vmax=vmax, extent=extent)
     else:
         plt.imshow(image, vmin=vmin, vmax=vmax, extent=extent)
     if SAVE_IMAGE:
         plt.savefig('../output/' + title.replace(' ', '_') + '.png')
+    if xlabel:
+        plt.xlabel(xlabel)
+    if ylabel:
+        plt.ylabel(ylabel)
+    plt.title(title)
     plt.show()
 
 
@@ -87,17 +92,17 @@ def power_spectrum_2D(ft2d, fx=None, fy=None):
     if fx != None:
         res = np.zeros(len(ft2d[0]))
         for y in xrange(len(ft2d[0])):
-            val = ft2d[fx, y]
+            val             = ft2d[fx, y]
             magnitudeSquare = val.imag * val.imag + val.real * val.real
-            res[y] = np.log(magnitudeSquare + epsilon)
+            res[y]          = np.log(magnitudeSquare + epsilon)
         return res
 
     if fy != None:
         res = np.zeros(len(ft2d))
         for x in xrange(len(ft2d)):
-            val = ft2d[x, fy]
+            val             = ft2d[x, fy]
             magnitudeSquare = val.imag * val.imag + val.real * val.real
-            res[x] = np.log(magnitudeSquare + epsilon)
+            res[x]          = np.log(magnitudeSquare + epsilon)
         return res
 
     res = np.zeros(ft2d.shape)
@@ -112,21 +117,23 @@ def power_spectrum_2D(ft2d, fx=None, fy=None):
 
 def display_plot(x, y, title="Plot", xlabel="x", ylabel="y", limits=[]):
     plt.figure()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     if isinstance(y, list):
         for arr in y:
             plt.plot(x, arr)
     else:
         plt.plot(x, y)
     plt.grid()
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
     if len(limits) > 0:
         plt.axis(limits)
     if SHOW_TITLE:
         plt.title(title)
     if SAVE_IMAGE:
         plt.savefig('../output/' + title.replace(' ', '_') + '.png')
+
     plt.show()
+
 #--------------------------------------------------- 
 # Question 1.9 and 1.10
 #--------------------------------------------------- 
@@ -135,7 +142,7 @@ def from_value_to_index(input_vector, input_value) :
     temp = np.abs(input_vector - input_value)  
     pos = np.argmin(temp)                   
        
-    return pos  
+    return pos
 
 
 def questions1_6():
@@ -150,10 +157,10 @@ def questions1_6():
     ft2d    = fft2(img)
     sum     = sum_pixels(img)
     freqSol = solve_discret_equation_FT(ft2d, sum)
-    
+
 # Question 1.3
     spectrum_2D = power_spectrum_2D(ft2d)
-    display_image(spectrum_2D, vmin=min(spectrum_2D.flatten()), vmax=max(spectrum_2D.flatten()))
+    display_image(spectrum_2D, vmin=min(spectrum_2D.flatten()), vmax=max(spectrum_2D.flatten()), xlabel='u (frequency)', ylabel='v (frequency)')
 
 # Question 1.4
     ft2d_shifted        = fftshift(ft2d)
